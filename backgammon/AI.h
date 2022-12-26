@@ -9,6 +9,8 @@ private:
 
 	std::vector<std::vector<int>> scoreMap;
 
+	void calculateScore();
+
 public:
 	//≥ı ºªØAI
 	void init(Chess* chess);
