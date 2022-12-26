@@ -2,12 +2,13 @@
 #include <algorithm>
 
 #include "Chess.h"
+#include "conio.h"
 
 void putimagePNG(int x, int y, IMAGE* picture);
 
 void Chess::updateGameMap(ChessPos* pos)
 {
-	ChessPos lastPos = *pos;
+	lastPos = *pos;
 	chessMap[pos->row][pos->col] = playerFlag ? 1 : -1;
 	playerFlag = !playerFlag;
 }
@@ -113,6 +114,95 @@ void Chess::chessDown(ChessPos* pos, chess_kind_t kind)
 	}
 
 	updateGameMap(pos);
+}
+
+int Chess::getGradeSize()
+{
+	return gradeSize;
+}
+
+int Chess::getChessData(ChessPos* pos)
+{
+	return chessMap[pos->row][pos->col];
+}
+
+int Chess::getChessData(int row, int col)
+{
+	return chessMap[row][col];
+}
+
+bool Chess::checkOver()
+{
+	if (checkWin()) {
+		Sleep(1500);
+		//黑棋即玩家赢，此时标记已被反转，轮到白棋落子
+		if (playerFlag == false) {
+			mciSendString("play res/不错.mp3", 0, 0, 0);
+			loadimage(0, "res/胜利.jpg");
+		}
+		else {
+			mciSendString("play res/失败.mp3", 0, 0, 0);
+			loadimage(0, "res/失败.jpg");
+		}
+
+		_getch();
+		return true;
+	}
+	return false;
+}
+
+bool Chess::checkWin()
+{
+	int row = lastPos.row;
+	int col = lastPos.col;
+
+	//以下判断类似于滑动窗口
+	for (int i = 0; i < 5; i++) {
+		//往左分别5个，往右匹配4个，20种情况
+		if (col - i >= 0 && col - i + 4 < gradeSize &&
+			chessMap[row][col - i] == chessMap[row][col - i + 1] &&
+			chessMap[row][col - i] == chessMap[row][col - i + 2] &&
+			chessMap[row][col - i] == chessMap[row][col - i + 3] &&
+			chessMap[row][col - i] == chessMap[row][col - i + 4]) {
+			return true;
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		//竖直方向
+		if (row - i >= 0 && row - i + 4 < gradeSize &&
+			chessMap[row - i][col] == chessMap[row - i + 1][col] &&
+			chessMap[row - i][col] == chessMap[row - i + 2][col] &&
+			chessMap[row - i][col] == chessMap[row - i + 3][col] &&
+			chessMap[row - i][col] == chessMap[row - i + 4][col]) {
+			return true;
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		//"/"方向
+		if (row + i < gradeSize && row + i - 4 >= 0 &&
+			col - i >= 0 && col - i + 4 < gradeSize &&
+			chessMap[row + i][col - i] == chessMap[row + i - 1][col - i + 1] &&
+			chessMap[row + i][col - i] == chessMap[row + i - 2][col - i + 2] &&
+			chessMap[row + i][col - i] == chessMap[row + i - 3][col - i + 3] &&
+			chessMap[row + i][col - i] == chessMap[row + i - 4][col - i + 4]) {
+			return true;
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		//"\"方向
+		if (row - i >= 0 && row - i + 4 < gradeSize &&
+			col - i >= 0 && col - i + 4 < gradeSize &&
+			chessMap[row - i][col - i] == chessMap[row - i + 1][col - i + 1] &&
+			chessMap[row - i][col - i] == chessMap[row - i + 2][col - i + 2] &&
+			chessMap[row - i][col - i] == chessMap[row - i + 3][col - i + 3] &&
+			chessMap[row - i][col - i] == chessMap[row - i + 4][col - i + 4]) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void putimagePNG(int x, int y, IMAGE* picture) {

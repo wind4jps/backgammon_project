@@ -25,6 +25,8 @@ private:
 
 	IMAGE chessBlackImg;
 	IMAGE chessWhiteImg;
+
+	ChessPos lastPos;
 	
 	//存储当前棋局中的棋盘上的棋子状态，其中0为空白，1为黑子，-1为白子
 	std::vector<std::vector<int>> chessMap;
@@ -47,10 +49,13 @@ public:
 
 	int getGradeSize();
 
-	int getChessDate(ChessPos* pos);
-	int getChessDate(int row, int col);
+	//获取棋盘指定位置处的棋子情况
+	int getChessData(ChessPos* pos);
+	int getChessData(int row, int col);
 
 	//用于判断棋局是否结束
 	bool checkOver();
+
+	bool checkWin();
 };
 

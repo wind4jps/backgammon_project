@@ -5,13 +5,13 @@
 
 class ChessGame
 {
-public:
-	ChessGame(Man*, AI*, Chess*);		//声明构造函数
-	void play();
-
 private:
 	Man* man;
 	AI* ai;
 	Chess* chess;
+
+public:
+	ChessGame(Man*, AI*, Chess*);		//声明构造函数
+	void play();
 };
 
