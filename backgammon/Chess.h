@@ -10,6 +10,7 @@ typedef enum {
 struct ChessPos {
 	int row;
 	int col;
+	ChessPos(int r = 0, int c = 0) :row(r), col(c){}
 };
 
 class Chess

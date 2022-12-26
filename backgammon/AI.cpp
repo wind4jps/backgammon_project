@@ -12,8 +12,8 @@ void AI::calculateScore()
 	int emptyNum = 0;
 
 	//往八个方向的坐标增减
-	int dr[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
-	int dc[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+	int dr[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+	int dc[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
 	//初始化评分数组
 	for (int i = 0; i < scoreMap.size(); i++) {
@@ -27,12 +27,12 @@ void AI::calculateScore()
 		for (int col = 0; col < size; col++) {
 			//若该点为空白点
 			if (chess->getChessDate(row, col) == 0) {
-				//对黑棋进行评分，正反两个方向，每个方向延伸四个子
 				for (int d = 0; d < 8; d++) {
 					//重置连子情况
 					personNum = 0;
 					botNum = 0;
 					emptyNum = 0;
+					//对黑棋进行评分，正反两个方向，每个方向延伸四个子，用以防守判断
 					for (int i = 1; i <= 4; i++) {
 						int curRow = row + dr[d] * i;
 						int curCol = col + dc[d] * i;
@@ -46,28 +46,17 @@ void AI::calculateScore()
 							break;
 						}
 					}
-					for (int i = 1; i <= 4; i++) {
-						int curRow = row - dr[d] * i;
-						int curCol = col - dc[d] * i;
-						if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessDate(curRow, curCol) == 1) {
-							personNum++;
-						}
-						else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessDate(curRow, curCol) == 0) {
-							emptyNum++;
-						}
-						else {
-							break;
-						}
-					}
-					//棋谱杀二情况
+					//棋谱连二情况
 					if (personNum == 1) {
 						scoreMap[row][col] += 10;
 					}
 					//棋谱连三情况
 					else if (personNum == 2) {
-						if (emptyNum == 1) {
+						//死三情况
+						if (emptyNum == 1) {	
 							scoreMap[row][col] += 30;
 						}
+						//活三情况
 						else if (emptyNum == 2) {
 							scoreMap[row][col] += 40;
 						}
@@ -87,23 +76,10 @@ void AI::calculateScore()
 					//进行清空
 					emptyNum = 0;
 					
-					//对白棋进行评分
+					//对白棋进行评分，用以进攻判断
 					for (int i = 1; i <= 4; i++) {
 						int curRow = row + i * dr[d];
 						int curCol = col + i * dc[d];
-						if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessDate(curRow, curCol) == -1) {
-							botNum++;
-						}
-						else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessDate(curRow, curCol) == 0) {
-							emptyNum++;
-						}
-						else {
-							break;
-						}
-					}
-					for (int i = 1; i <= 4; i++) {
-						int curRow = row - i * dr[d];
-						int curCol = col - i * dc[d];
 						if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessDate(curRow, curCol) == -1) {
 							botNum++;
 						}
@@ -150,6 +126,35 @@ void AI::calculateScore()
 			}
 		}
 	}
+}
+
+ChessPos AI::think()
+{
+	calculateScore();
+	int maxScore = 0;
+
+	std::vector<ChessPos> maxPos;
+
+
+	int size = chess->getGradeSize();
+	for (int row = 0; row < size; row++) {
+		for (int col = 0; col < size; col++) {
+			if (chess->getChessDate(row, col) == 0) {
+				if (scoreMap[row][col] > maxScore) {
+					maxScore = scoreMap[row][col];
+					maxPos.clear();
+					maxPos.push_back(ChessPos(row, col));
+				}
+				else if (scoreMap[row][col] == maxScore) {
+					maxPos.push_back(ChessPos(row, col));
+				}
+			}
+		}
+	}
+
+	//若有多个点，随机落子
+	int index = rand() % maxPos.size();
+	return maxPos[index];
 }
 
 void AI::init(Chess* chess)
