@@ -13,7 +13,8 @@ private:
 	Chess* chess;
 
 public:
-	ChessGame(Man* man, AI* ai, Chess* chess);		//声明构造函数
+	//声明构造函数
+	ChessGame(Man* man, AI* ai, Chess* chess);
 	void play();
 };
 
