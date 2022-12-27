@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AI.h"
 #include "Man.h"
 #include "Chess.h"
@@ -11,7 +13,7 @@ private:
 	Chess* chess;
 
 public:
-	ChessGame(Man*, AI*, Chess*);		//声明构造函数
+	ChessGame(Man* man, AI* ai, Chess* chess);		//声明构造函数
 	void play();
 };
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Chess.h"
 
 class Man
