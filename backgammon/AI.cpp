@@ -49,7 +49,7 @@ void AI::calculateScore()
 						jumpEmptyNum1 = 0;
 						jumpEmptyNum2 = 0;
 						//对黑棋进行评分，正反两个方向每个方向延伸四个子，用以防守判断
-						if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 0) {
+						if (row + y >= 0 && row + y < size && col + x >= 0 && col + x < size && chess->getChessData(row + y, col + x) == 0) {
 							emptyNum++;
 							jumpEmptyNum1++;
 							for (int i = 2; i <= 4; i++) {
@@ -68,7 +68,7 @@ void AI::calculateScore()
 								}
 							}
 						}
-						else if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 1) {
+						else if (row + y >= 0 && row + y < size && col + x >= 0 && col + x < size && chess->getChessData(row + y, col + x) == 1) {
 							for (int i = 1; i <= 4; i++) {
 								int curRow = row + y * i;
 								int curCol = col + x * i;
@@ -103,7 +103,7 @@ void AI::calculateScore()
 							}
 						}
 						*/
-						if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 0) {
+						if (row - y >= 0 && row - y < size && col - x >= 0 && col - x < size && chess->getChessData(row - y, col - x) == 0) {
 							emptyNum++;
 							jumpEmptyNum2++;
 							for (int i = 2; i <= 4; i++) {
@@ -122,7 +122,7 @@ void AI::calculateScore()
 								}
 							}
 						}
-						else if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 1) {
+						else if (row - y >= 0 && row - y < size && col - x >= 0 && col - x < size && chess->getChessData(row - y, col - x) == 1) {
 							for (int i = 1; i <= 4; i++) {
 								int curRow = row - y * i;
 								int curCol = col - x * i;
@@ -231,7 +231,7 @@ void AI::calculateScore()
 						jumpEmptyNum2 = 0;
 
 						//对白棋进行评分，用以进攻判断
-						if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 0) {
+						if (row + y >= 0 && row + y < size && col + x >= 0 && col + x < size && chess->getChessData(row + y, col + x) == 0) {
 							emptyNum++;
 							jumpEmptyNum1++;
 							for (int i = 2; i <= 4; i++) {
@@ -250,7 +250,7 @@ void AI::calculateScore()
 								}
 							}
 						}
-						else if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == -1) {
+						else if (row + y >= 0 && row + y < size && col + x >= 0 && col + x < size && chess->getChessData(row + y, col + x) == -1) {
 							for (int i = 1; i <= 4; i++) {
 								int curRow = row + y * i;
 								int curCol = col + x * i;
@@ -267,7 +267,7 @@ void AI::calculateScore()
 								}
 							}
 						}
-						if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 0) {
+						if (row - y >= 0 && row - y < size && col - x >= 0 && col - x < size && chess->getChessData(row - y, col - x) == 0) {
 							emptyNum++;
 							jumpEmptyNum2++;
 							for (int i = 2; i <= 4; i++) {
@@ -286,7 +286,7 @@ void AI::calculateScore()
 								}
 							}
 						}
-						else if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == -1) {
+						else if (row - y >= 0 && row - y < size && col - x >= 0 && col - x < size && chess->getChessData(row - y, col - x) == -1) {
 							for (int i = 1; i <= 4; i++) {
 								int curRow = row - y * i;
 								int curCol = col - x * i;
