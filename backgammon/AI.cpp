@@ -10,6 +10,13 @@ void AI::calculateScore()
 	int botNum = 0;
 	//各方向空白的个数
 	int emptyNum = 0;
+	//两个方向跳三跳四特判
+	int jumpPersonNum1 = 0;
+	int jumpPersonNum2 = 0;
+	int jumpBotNum1 = 0;
+	int jumpBotNum2 = 0;
+	int jumpEmptyNum1 = 0;
+	int jumpEmptyNum2 = 0;
 
 	//初始化评分数组
 	for (int i = 0; i < scoreMap.size(); i++) {
@@ -35,7 +42,51 @@ void AI::calculateScore()
 						personNum = 0;
 						botNum = 0;
 						emptyNum = 0;
+						jumpPersonNum1 = 0;
+						jumpPersonNum2 = 0;
+						jumpBotNum1 = 0;
+						jumpBotNum2 = 0;
+						jumpEmptyNum1 = 0;
+						jumpEmptyNum2 = 0;
 						//对黑棋进行评分，正反两个方向每个方向延伸四个子，用以防守判断
+						if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 0) {
+							emptyNum++;
+							jumpEmptyNum1++;
+							for (int i = 2; i <= 4; i++) {
+								int curRow = row + y * i;
+								int curCol = col + x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 1) {
+									jumpPersonNum1++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									jumpEmptyNum1++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						else if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 1) {
+							for (int i = 1; i <= 4; i++) {
+								int curRow = row + y * i;
+								int curCol = col + x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 1) {
+									personNum++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									emptyNum++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						//修改跳三跳四前的评分判断
+						/*
 						for (int i = 1; i <= 4; i++) {
 							int curRow = row + y * i;
 							int curCol = col + x * i;
@@ -51,6 +102,45 @@ void AI::calculateScore()
 								break;
 							}
 						}
+						*/
+						if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 0) {
+							emptyNum++;
+							jumpEmptyNum2++;
+							for (int i = 2; i <= 4; i++) {
+								int curRow = row - y * i;
+								int curCol = col - x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 1) {
+									jumpPersonNum2++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									jumpEmptyNum2++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						else if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 1) {
+							for (int i = 1; i <= 4; i++) {
+								int curRow = row - y * i;
+								int curCol = col - x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 1) {
+									personNum++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									emptyNum++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						//修改跳三跳四前的评分判断
+						/*
 						for (int i = 1; i <= 4; i++) {
 							int curRow = row - y * i;
 							int curCol = col - x * i;
@@ -65,7 +155,7 @@ void AI::calculateScore()
 							else {
 								break;
 							}
-						}
+						}*/
 						//棋谱连二情况
 						if (personNum == 1) {
 							scoreMap[row][col] += 10;
@@ -94,10 +184,127 @@ void AI::calculateScore()
 							scoreMap[row][col] += 20000;
 						}
 
+						//对两个反向跳三跳四的单独判断
+						//跳三
+						if (jumpPersonNum1 == 2) {
+							if (jumpEmptyNum1 == 1) {
+								scoreMap[row][col] += 30;
+							}
+							else if (jumpEmptyNum1 == 2) {
+								scoreMap[row][col] += 40;
+							}
+						}
+
+						//跳四
+						else if (jumpPersonNum1 == 3) {
+							if (jumpEmptyNum1 == 1) {
+								scoreMap[row][col] += 60;
+							}
+							else if (jumpEmptyNum1 == 2) {
+								scoreMap[row][col] += 5000;
+							}
+						}
+
+						//跳三
+						if (jumpPersonNum2 == 2) {
+							if (jumpEmptyNum2 == 1) {
+								scoreMap[row][col] += 30;
+							}
+							else if (jumpEmptyNum2 == 2) {
+								scoreMap[row][col] += 40;
+							}
+						}
+
+						//跳四
+						else if (jumpPersonNum2 == 3) {
+							if (jumpEmptyNum2 == 1) {
+								scoreMap[row][col] += 60;
+							}
+							else if (jumpEmptyNum2 == 2) {
+								scoreMap[row][col] += 5000;
+							}
+						}
+
 						//进行清空
 						emptyNum = 0;
+						jumpEmptyNum1 = 0;
+						jumpEmptyNum2 = 0;
 
 						//对白棋进行评分，用以进攻判断
+						if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == 0) {
+							emptyNum++;
+							jumpEmptyNum1++;
+							for (int i = 2; i <= 4; i++) {
+								int curRow = row + y * i;
+								int curCol = col + x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == -1) {
+									jumpBotNum1++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									jumpEmptyNum1++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						else if (row + x >= 0 && row + x < size && col + y >= 0 && col + y < size && chess->getChessData(row + x, col + y) == -1) {
+							for (int i = 1; i <= 4; i++) {
+								int curRow = row + y * i;
+								int curCol = col + x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == -1) {
+									botNum++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									emptyNum++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == 0) {
+							emptyNum++;
+							jumpEmptyNum2++;
+							for (int i = 2; i <= 4; i++) {
+								int curRow = row - y * i;
+								int curCol = col - x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == -1) {
+									jumpBotNum2++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									jumpEmptyNum2++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						else if (row - x >= 0 && row - x < size && col - y >= 0 && col - y < size && chess->getChessData(row - x, col - y) == -1) {
+							for (int i = 1; i <= 4; i++) {
+								int curRow = row - y * i;
+								int curCol = col - x * i;
+								if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == -1) {
+									botNum++;
+								}
+								else if (curRow >= 0 && curRow < size && curCol >= 0 && curCol < size && chess->getChessData(curRow, curCol) == 0) {
+									emptyNum++;
+									break;
+								}
+								//被对方棋子断掉或越界
+								else {
+									break;
+								}
+							}
+						}
+						//未加入跳三跳四前的判断
+						/*
 						for (int i = 1; i <= 4; i++) {
 							int curRow = row + y * i;
 							int curCol = col + y * i;
@@ -126,6 +333,8 @@ void AI::calculateScore()
 								break;
 							}
 						}
+						*/
+
 						//普通
 						if (botNum == 0) {
 							scoreMap[row][col] += 5;
@@ -157,6 +366,45 @@ void AI::calculateScore()
 						//活五
 						else if (botNum >= 4) {
 							scoreMap[row][col] += 30000;
+						}
+
+						//对跳三跳四的单独判断
+						//跳三
+						if (jumpBotNum1 == 2) {
+							if (jumpEmptyNum1 == 1) {
+								scoreMap[row][col] += 25;
+							}
+							else if (jumpEmptyNum1 == 2) {
+								scoreMap[row][col] += 50;
+							}
+						}
+						//跳四
+						if (jumpBotNum1 == 3) {
+							if (jumpEmptyNum1 == 1) {
+								scoreMap[row][col] += 55;
+							}
+							else if (jumpEmptyNum1 == 2) {
+								scoreMap[row][col] += 10000;
+							}
+						}
+
+						//跳三
+						if (jumpBotNum2 == 2) {
+							if (jumpEmptyNum2 == 1) {
+								scoreMap[row][col] += 25;
+							}
+							else if (jumpEmptyNum2 == 2) {
+								scoreMap[row][col] += 50;
+							}
+						}
+						//跳四
+						if (jumpBotNum2 == 3) {
+							if (jumpEmptyNum2 == 1) {
+								scoreMap[row][col] += 55;
+							}
+							else if (jumpEmptyNum2 == 2) {
+								scoreMap[row][col] += 10000;
+							}
 						}
 					}
 				}
