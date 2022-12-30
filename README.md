@@ -4,7 +4,7 @@
 用于练习C++面向对象编程技术
 
 ## 文件打开方法
-TODO
+克隆后打开.sln文件后直接点击本地windows调试器即可
 
 ## 原理
 TODO
@@ -13,4 +13,4 @@ TODO
 TODO
 
 ## 版本
-version 
+version 1.0
